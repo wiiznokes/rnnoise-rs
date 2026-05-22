@@ -19,7 +19,7 @@ fn download_model(archive_path: &Path, model_name: &str) -> anyhow::Result<()> {
     }
 
     let bytes = response.bytes()?;
-    fs::write(&archive_path, &bytes)?;
+    fs::write(archive_path, &bytes)?;
 
     Ok(())
 }
@@ -84,14 +84,25 @@ fn main() {
 
     cfg.file(extracted_archive_path.join("src/rnnoise_data.c"));
 
+    cfg.warnings(false);
+
     cfg.compile("rnnoise");
 
-    let bindings = bindgen::builder()
-        .header("rnnoise/include/rnnoise.h")
-        .generate()
-        .unwrap();
+    let mut builder = bindgen::builder().header("rnnoise/include/rnnoise.h");
+
+    // Make the `FILE` type opaque, so bindgen does not pull other types from the
+    // standard library.
+    // Then block `FILE`, so bindgen does not emit it.
+    // Then define `FILE` explicitly so that it can only be used behind a pointer.
+    builder = builder.opaque_type("^FILE$");
+    builder = builder.blocklist_type("^FILE$");
+    builder = builder.raw_line("pub type FILE = ::std::ffi::c_void;");
+
+    builder = builder.allowlist_function("^rnnoise_.+$");
 
     let mut file = File::create(dst.join("lib.rs")).unwrap();
 
-    file.write(bindings.to_string().as_bytes()).unwrap();
+    let bindings = builder.generate().unwrap();
+
+    file.write_all(bindings.to_string().as_bytes()).unwrap();
 }

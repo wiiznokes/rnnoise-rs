@@ -19,3 +19,4 @@ keywords.workspace = true
 [workspace.dependencies]
 
 [dependencies]
+rnnoise2-sys = { path = "sys" }
