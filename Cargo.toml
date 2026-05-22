@@ -7,11 +7,15 @@ edition = "2024"
 license = "MIT"
 homepage = "https://github.com/wiiznokes/rnnoise-rs/"
 repository = "https://github.com/wiiznokes/rnnoise-rs.git"
-
+keywords = ["audio"]
 
 [package]
 name = "rnnoise-rs"
 version = "0.1.0"
+license.workspace = true
 edition.workspace = true
+keywords.workspace = true
+
+[workspace.dependencies]
 
 [dependencies]
