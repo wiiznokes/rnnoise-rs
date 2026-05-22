@@ -1036,6 +1036,9 @@ dependencies = [
 [[package]]
 name = "rnnoise-rs"
 version = "0.1.0"
+dependencies = [
+ "rnnoise2-sys",
+]
 
 [[package]]
 name = "rnnoise2-sys"
