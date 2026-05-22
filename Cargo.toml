@@ -1,0 +1,17 @@
+[workspace]
+members = ["sys"]
+
+[workspace.package]
+authors = ["wiiznokes <wiiznokes2@gmail.com>"]
+edition = "2024"
+license = "MIT"
+homepage = "https://github.com/wiiznokes/rnnoise-rs/"
+repository = "https://github.com/wiiznokes/rnnoise-rs.git"
+
+
+[package]
+name = "rnnoise-rs"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
