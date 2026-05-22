@@ -6,3 +6,5 @@ The C code is vendored. The models are downloaded in the build script. This is n
 
 Model are hosted in [this website](https://media.xiph.org/rnnoise/models/).
 The crate will use the last by default.
+
+The crate could use any commit of the rnnoise repo.
