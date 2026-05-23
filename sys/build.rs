@@ -8,7 +8,7 @@ use std::{
 use anyhow::bail;
 
 fn download_model(archive_path: &Path, model_name: &str) -> anyhow::Result<()> {
-    println!("cargo:warning=Downloading {model_name}");
+    println!("Downloading {model_name}");
 
     let url = format!("https://media.xiph.org/rnnoise/models/{model_name}.tar.gz");
 
@@ -31,7 +31,7 @@ fn unpack(tar: &Path, dst: &Path) -> anyhow::Result<()> {
 
     archive.unpack(dst)?;
 
-    println!("cargo:warning=Model extracted to {}", dst.display());
+    println!("Model extracted to {}", dst.display());
 
     Ok(())
 }
