@@ -9,6 +9,7 @@ use rnnoise2_sys::{
     rnnoise_process_frame,
 };
 
+#[derive(Clone)]
 pub struct Model {
     ptr: NonNull<RNNModel>,
 }
@@ -42,10 +43,12 @@ impl Drop for Model {
     }
 }
 
+#[derive(Clone)]
 pub struct Denoiser {
     ptr: NonNull<DenoiseState>,
-    frame_size: usize,
 }
+
+unsafe impl Send for Denoiser {}
 
 impl Denoiser {
     /// Create using default or custom model
@@ -55,19 +58,18 @@ impl Denoiser {
 
         let ptr = NonNull::new(ptr)?;
 
-        let frame_size = unsafe { rnnoise_get_frame_size() } as usize;
-
-        Some(Self { ptr, frame_size })
+        Some(Self { ptr })
     }
 
-    pub fn frame_size(&self) -> usize {
-        self.frame_size
+    pub fn frame_size() -> usize {
+        unsafe { rnnoise_get_frame_size() as usize }
     }
 
     /// Denoise a frame of samples
     pub fn process(&mut self, input: &[f32], output: &mut [f32]) -> f32 {
-        assert!(input.len() >= self.frame_size);
-        assert!(output.len() >= self.frame_size);
+        let frame_size = Denoiser::frame_size();
+        assert!(input.len() >= frame_size);
+        assert!(output.len() >= frame_size);
 
         unsafe { rnnoise_process_frame(self.ptr.as_ptr(), output.as_mut_ptr(), input.as_ptr()) }
     }
