@@ -36,17 +36,27 @@ fn unpack(tar: &Path, dst: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
+const LAST_MODEL_VERSION: &str = "0a8755f8e2d834eff6a54714ecc7d75f9932e845df35f8b59bc52a7cfe6e8b37";
+
 fn main() {
     let dst = PathBuf::from(env::var_os("OUT_DIR").unwrap());
 
-    let last_model_version = "0a8755f8e2d834eff6a54714ecc7d75f9932e845df35f8b59bc52a7cfe6e8b37";
+    println!("cargo:rerun-if-env-changed=RNNOISE_MODEL");
+
+    let model_version = match env::var("RNNOISE_MODEL") {
+        Ok(value) => value,
+        Err(env::VarError::NotPresent) => LAST_MODEL_VERSION.to_string(),
+        Err(err) => {
+            panic!("Invalid RNNOISE_MODEL: {err}");
+        }
+    };
 
     // let model_version = fs::read_to_string("rnnoise/model_version")
     //     .unwrap()
     //     .trim()
     //     .to_string();
 
-    let model_name = format!("rnnoise_data-{last_model_version}");
+    let model_name = format!("rnnoise_data-{model_version}");
 
     let archive_path = dst.join(format!("{model_name}.tar.gz"));
     let extracted_archive_path = dst.join(&model_name);
@@ -68,14 +78,10 @@ fn main() {
         "pitch.c",
         "kiss_fft.c",
         "celt_lpc.c",
-        // "dump_features.c",
-        // "dump_rnnoise_tables.c",
         "nnet.c",
         "nnet_default.c",
         "parse_lpcnet_weights.c",
-        // "rnnoise_data.c",
         "rnnoise_tables.c",
-        // "write_weights.c",
     ];
 
     for f in common_c_files {
