@@ -41,29 +41,65 @@ const LAST_MODEL_VERSION: &str = "0a8755f8e2d834eff6a54714ecc7d75f9932e845df35f8
 fn main() {
     let dst = PathBuf::from(env::var_os("OUT_DIR").unwrap());
 
+    println!("cargo:rerun-if-env-changed=RNNOISE_MODEL_PATH");
     println!("cargo:rerun-if-env-changed=RNNOISE_MODEL");
 
-    let model_version = match env::var("RNNOISE_MODEL") {
-        Ok(value) => value,
-        Err(env::VarError::NotPresent) => LAST_MODEL_VERSION.to_string(),
+    let model_path = match env::var("RNNOISE_MODEL_PATH") {
+        Ok(value) => {
+            if !value.ends_with("tar.gz") {
+                panic!("RNNOISE_MODEL_PATH doesn't end with tar.gz");
+            }
+
+            let path = PathBuf::from(value);
+            if !path.exists() {
+                panic!("RNNOISE_MODEL_PATH value doesn't exist");
+            }
+
+            Some(path)
+        }
+        Err(env::VarError::NotPresent) => None,
         Err(err) => {
-            panic!("Invalid RNNOISE_MODEL: {err}");
+            panic!("Invalid RNNOISE_MODEL_PATH: {err}");
         }
     };
 
-    // let model_version = fs::read_to_string("rnnoise/model_version")
-    //     .unwrap()
-    //     .trim()
-    //     .to_string();
+    let model_name = if let Some(model_path) = &model_path {
+        model_path
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .strip_suffix("tar.gz")
+            .unwrap()
+            .to_string()
+    } else {
+        // let model_version = fs::read_to_string("rnnoise/model_version")
+        //     .unwrap()
+        //     .trim()
+        //     .to_string();
 
-    let model_name = format!("rnnoise_data-{model_version}");
+        let last_model_version = match env::var("RNNOISE_MODEL") {
+            Ok(value) => value,
+            Err(env::VarError::NotPresent) => LAST_MODEL_VERSION.to_string(),
+            Err(err) => {
+                panic!("Invalid RNNOISE_MODEL: {err}");
+            }
+        };
 
-    let archive_path = dst.join(format!("{model_name}.tar.gz"));
+        format!("rnnoise_data-{last_model_version}")
+    };
+
     let extracted_archive_path = dst.join(&model_name);
 
+    let archive_path = dst.join(format!("{model_name}.tar.gz"));
+
     if !extracted_archive_path.exists() {
-        download_model(&archive_path, &model_name).unwrap();
-        unpack(&archive_path, &extracted_archive_path).unwrap();
+        if let Some(model_path) = &model_path {
+            unpack(model_path, &extracted_archive_path).unwrap();
+        } else {
+            download_model(&archive_path, &model_name).unwrap();
+            unpack(&archive_path, &extracted_archive_path).unwrap();
+        }
     }
 
     let mut cfg = cc::Build::new();

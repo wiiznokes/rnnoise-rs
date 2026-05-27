@@ -1,10 +1,17 @@
 Rust binding for the [rnnoise](https://gitlab.xiph.org/xiph/rnnoise) library.
 
-To enable optimization, only `CFLAGS="-march=native"` seems to be working (see https://github.com/rust-lang/cc-rs/issues/1734).
+The C code is vendored. The crate may use any commit of the rnnoise repository.
 
-The C code is vendored. The models are downloaded in the build script. This is not ideal, so it would be nice to be able to provide a path to the model we want to use.
+Models are hosted on [this website](https://media.xiph.org/rnnoise/models/).
+By default, the latest model available at the time of release will be downloaded.
 
-Model are hosted in [this website](https://media.xiph.org/rnnoise/models/).
-The crate will use the last by default.
+You can configure which model will be used with the `RNNOISE_MODEL` environment variable.
 
-The crate could use any commit of the rnnoise repo.
+Example: `RNNOISE_MODEL=0a8755f8e2d834eff6a54714ecc7d75f9932e845df35f8b59bc52a7cfe6e8b37`
+
+You can also provide a local model via `RNNOISE_MODEL_PATH`, avoiding network access.
+The file must be a `tar.gz`.
+
+Example: `RNNOISE_MODEL_PATH="path/to/model.tar.gz"`
+
+To enable optimization, only `CFLAGS="-march=native"` seems to work (see <https://github.com/rust-lang/cc-rs/issues/1734>).

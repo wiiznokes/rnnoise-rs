@@ -1034,7 +1034,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rnnoise-rs"
+name = "rnnoise2"
 version = "0.1.0"
 dependencies = [
  "rnnoise2-sys",
