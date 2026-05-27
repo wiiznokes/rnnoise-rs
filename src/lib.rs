@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use std::ffi::CString;
 use std::os::raw::{c_int, c_void};
 use std::path::Path;

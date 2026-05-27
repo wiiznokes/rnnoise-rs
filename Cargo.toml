@@ -10,11 +10,17 @@ repository = "https://github.com/wiiznokes/rnnoise-rs.git"
 keywords = ["audio"]
 
 [package]
-name = "rnnoise-rs"
+name = "rnnoise2"
 version = "0.1.0"
+description = """
+Abstraction arround the rnnoise C bindings
+"""
+readme = "README.md"
 license.workspace = true
 edition.workspace = true
 keywords.workspace = true
+repository.workspace = true
+homepage.workspace = true
 
 [workspace.dependencies]
 
