@@ -25,4 +25,4 @@ homepage.workspace = true
 [workspace.dependencies]
 
 [dependencies]
-rnnoise2-sys = { path = "sys" }
+rnnoise2-sys = { path = "sys", version = "0.1" }
