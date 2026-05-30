@@ -1,6 +1,6 @@
 [package]
 name = "rnnoise2-sys"
-version = "0.1.0"
+version = "0.1.1"
 categories = ["api-bindings"]
 description = "low level bindings for the rnnoise library"
 readme = "../README.md"
