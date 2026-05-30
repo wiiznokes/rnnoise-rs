@@ -1,7 +1,7 @@
 [![crates.io](https://img.shields.io/crates/v/rnnoise2?style=flat-square&logo=rust)](https://crates.io/crates/rnnoise2)
 [![docs.rs](https://img.shields.io/badge/docs.rs-rnnoise2-blue?style=flat-square&logo=docs.rs)](https://docs.rs/rnnoise2)
-[![crates.io](https://img.shields.io/crates/v/rnnoise2-sys?style=flat-square&logo=rust)](https://crates.io/crates/rnnoise2-sys)
-[![docs.rs](https://img.shields.io/badge/docs.rs-rnnoise2-sys-blue?style=flat-square&logo=docs.rs)](https://docs.rs/rnnoise2-sys)
+[![crates.io](https://img.shields.io/crates/v/rnnoise2_sys?style=flat-square&logo=rust)](https://crates.io/crates/rnnoise2-sys)
+[![docs.rs](https://img.shields.io/badge/docs.rs-rnnoise2_sys-blue?style=flat-square&logo=docs.rs)](https://docs.rs/rnnoise2-sys)
 [![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#license)
 
 ## Rust binding for the [rnnoise](https://gitlab.xiph.org/xiph/rnnoise) library.
