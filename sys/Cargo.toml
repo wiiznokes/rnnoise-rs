@@ -10,6 +10,9 @@ keywords.workspace = true
 repository.workspace = true
 homepage.workspace = true
 
+[features]
+runtime-model = []
+
 [dependencies]
 
 [build-dependencies]
@@ -21,3 +24,6 @@ tar = "0.4"
 anyhow = "1"
 
 [dev-dependencies]
+
+[package.metadata.docs.rs]
+features = ["runtime-model"]

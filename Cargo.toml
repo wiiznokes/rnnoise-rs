@@ -24,5 +24,11 @@ homepage.workspace = true
 
 [workspace.dependencies]
 
+[features]
+runtime-model = ["rnnoise2-sys/runtime-model"]
+
 [dependencies]
 rnnoise2-sys = { path = "sys", version = "0.1" }
+
+[package.metadata.docs.rs]
+features = ["runtime-model"]

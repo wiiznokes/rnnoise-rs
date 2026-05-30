@@ -1,15 +1,11 @@
 #![doc = include_str!("../README.md")]
 
-use std::ffi::CString;
 use std::marker::PhantomData;
-use std::os::raw::{c_int, c_void};
-use std::path::Path;
 use std::ptr::NonNull;
 
 use rnnoise2_sys::{
     DenoiseState, RNNModel, rnnoise_create, rnnoise_destroy, rnnoise_get_frame_size,
-    rnnoise_model_free, rnnoise_model_from_buffer, rnnoise_model_from_filename,
-    rnnoise_process_frame,
+    rnnoise_model_free, rnnoise_process_frame,
 };
 
 #[derive(Clone)]
@@ -20,9 +16,16 @@ pub struct Model<'a> {
 
 impl<'a> Model<'a> {
     /// Load model from memory buffer
+    #[cfg(feature = "runtime-model")]
     pub fn from_buffer(buf: &'a [u8]) -> Option<Self> {
-        let ptr =
-            unsafe { rnnoise_model_from_buffer(buf.as_ptr() as *const c_void, buf.len() as c_int) };
+        use std::os::raw::{c_int, c_void};
+
+        let ptr = unsafe {
+            rnnoise2_sys::rnnoise_model_from_buffer(
+                buf.as_ptr() as *const c_void,
+                buf.len() as c_int,
+            )
+        };
         NonNull::new(ptr).map(|p| Self {
             ptr: p,
             _marker: PhantomData,
@@ -30,10 +33,11 @@ impl<'a> Model<'a> {
     }
 
     /// Load model from a path
-    pub fn from_path(path: impl AsRef<Path>) -> Option<Self> {
-        let c_path = CString::new(path.as_ref().as_os_str().as_encoded_bytes()).ok()?;
+    #[cfg(feature = "runtime-model")]
+    pub fn from_path(path: impl AsRef<std::path::Path>) -> Option<Self> {
+        let c_path = std::ffi::CString::new(path.as_ref().as_os_str().as_encoded_bytes()).ok()?;
 
-        let ptr = unsafe { rnnoise_model_from_filename(c_path.as_ptr()) };
+        let ptr = unsafe { rnnoise2_sys::rnnoise_model_from_filename(c_path.as_ptr()) };
         NonNull::new(ptr).map(|p| Self {
             ptr: p,
             _marker: PhantomData,
