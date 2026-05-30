@@ -21,3 +21,5 @@ The file must be a `tar.gz`.
 Example: `RNNOISE_MODEL_PATH="path/to/model.tar.gz"`
 
 To enable optimization, only `CFLAGS="-march=native"` seems to work (see <https://github.com/rust-lang/cc-rs/issues/1734>).
+
+You can also use the `runtime-model` feature to load models at runtime, but this feature have not been tested, and it might require some change in the C code to specify the model size.
