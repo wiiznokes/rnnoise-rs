@@ -1,6 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 use std::ffi::CString;
+use std::marker::PhantomData;
 use std::os::raw::{c_int, c_void};
 use std::path::Path;
 use std::ptr::NonNull;
@@ -12,24 +13,31 @@ use rnnoise2_sys::{
 };
 
 #[derive(Clone)]
-pub struct Model {
+pub struct Model<'a> {
     ptr: NonNull<RNNModel>,
+    _marker: PhantomData<&'a ()>,
 }
 
-impl Model {
+impl<'a> Model<'a> {
     /// Load model from memory buffer
-    pub fn from_buffer(buf: &[u8]) -> Option<Self> {
+    pub fn from_buffer(buf: &'a [u8]) -> Option<Self> {
         let ptr =
             unsafe { rnnoise_model_from_buffer(buf.as_ptr() as *const c_void, buf.len() as c_int) };
-        NonNull::new(ptr).map(|p| Self { ptr: p })
+        NonNull::new(ptr).map(|p| Self {
+            ptr: p,
+            _marker: PhantomData,
+        })
     }
 
     /// Load model from a path
-    pub fn from_path(path: &Path) -> Option<Self> {
-        let c_path = CString::new(path.as_os_str().as_encoded_bytes()).ok()?;
+    pub fn from_path(path: impl AsRef<Path>) -> Option<Self> {
+        let c_path = CString::new(path.as_ref().as_os_str().as_encoded_bytes()).ok()?;
 
         let ptr = unsafe { rnnoise_model_from_filename(c_path.as_ptr()) };
-        NonNull::new(ptr).map(|p| Self { ptr: p })
+        NonNull::new(ptr).map(|p| Self {
+            ptr: p,
+            _marker: PhantomData,
+        })
     }
 
     fn as_ptr(&self) -> *mut RNNModel {
@@ -37,7 +45,7 @@ impl Model {
     }
 }
 
-impl Drop for Model {
+impl Drop for Model<'_> {
     fn drop(&mut self) {
         unsafe {
             rnnoise_model_free(self.ptr.as_ptr());
